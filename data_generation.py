@@ -18,7 +18,7 @@ def loadXY():
     Can't figure out how to pass non-optimiziable variable to the bayes opt
     module. Just load them from pickle everytime in evaluate_network()
     '''
-    unfolding_data = pd.read_pickle("/g/g15/mcgreivy/testSpectraGen/IAEA_data/unfolding_data.pkl")
+    unfolding_data = pd.read_pickle(constants.HOME_DIR + "IAEA_data/unfolding_data.pkl")
 
     X = np.zeros((251,15))
     Y = np.zeros((251,53))

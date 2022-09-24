@@ -119,7 +119,7 @@ def train(epochs, batch_size = 32, draw_data = lambda : (data_generation.x_data_
 
     save_GAN()
 
-save_location = "/g/g15/mcgreivy/testSpectraGen/saved_networks/GAN/"
+save_location = constants.HOME_DIR + "saved_networks/GAN/"
 
 def save_GAN():
     generator_json = generator.to_json()

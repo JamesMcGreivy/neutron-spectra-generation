@@ -11,7 +11,7 @@ import tensorflow as tf
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 import sys
-sys.path.append('/g/g15/mcgreivy/testSpectraGen/')
+sys.path.append(constants.HOME_DIR)
 
 import unfolding_network
 import data_generation

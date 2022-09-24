@@ -12,12 +12,12 @@ import numpy as np
 import tensorflow as tf
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-import sys
-sys.path.append('/g/g15/mcgreivy/testSpectraGen/')
-
 import unfolding_network
 import data_generation
 import constants
+
+import sys
+sys.path.append(constants.HOME_DIR)
 
 
 xeval, yeval = None, None

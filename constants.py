@@ -1,5 +1,8 @@
 import numpy as np
 
+# Home Directory of the Project
+HOME_DIR = "/g/g15/mcgreivy/NeutronSpectraGeneration/"
+
 # Data directly taken from PDF
 Ebins = np.array([1.00E-03,2.15E-03,4.64E-03,1.00E-02,2.15E-02,4.64E-02,1.00E-01,2.15E-01,4.64E-01,1.00E+00,2.15E+00,4.64E+00,1.00E+01,2.15E+01,4.64E+01,1.00E+02,2.15E+02,4.64E+02,1.00E+03,2.15E+03,4.64E+03,1.00E+04,1.25E+04,1.58E+04,1.99E+04,2.51E+04,3.16E+04,3.98E+04,5.01E+04,6.30E+04,7.94E+04,1.00E+05,1.25E+05,1.58E+05,1.99E+05,2.51E+05,3.16E+05,3.98E+05,5.01E+05,6.30E+05,7.94E+05,1.00E+06,1.25E+06,1.58E+06,1.99E+06,2.51E+06,3.16E+06,3.98E+06,5.01E+06,6.30E+06,7.94E+06,1.00E+07,1.58E+07])
 
@@ -27,7 +30,7 @@ cm = np.array([
 
 # ~~ Path to log bayesian optimization to ~~ #
 
-LOG_PATH_BO = "/g/g15/mcgreivy/testSpectraGen/optimizers/logs/"
+LOG_PATH_BO = HOME_DIR + "optimizers/logs/"
 
 # ~~ Optimal Params Unfolding ~~ #
 
