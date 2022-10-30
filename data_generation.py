@@ -8,8 +8,15 @@ import os
 from tensorflow.keras.models import model_from_json
 import scipy.interpolate
 import scipy
+import random
 
 import GAN_network
+
+import sys
+sys.path.append('/g/g15/mcgreivy/NeutronSpectraGeneration/FRUIT')
+sys.path.append('/g/g15/mcgreivy/NeutronSpectraGeneration')
+
+import fruit_spectra
 
 # Loads the real-world data from IAEA tecdoc
 def loadXY():
@@ -94,69 +101,30 @@ PSA = lambda num_data, yPerturbFrom : perturb_spectra_algorithm(constants.OPT_PA
 
 
 # FRUIT Algorithm
+def FRUIT_spectra_algorithm(NUM_DATA = NUM_DATA):
 
+    yData = []
+    for i in range(NUM_DATA):
+        spectra_type = random.randint(0, 3)
 
-def thermal(E, T_0):
-    return (E / (np.power(T_0, 2)))*np.exp(-E/T_0)
+        if spectra_type == 0:
+            yData.append(fruit_spectra.randFission())
+        elif spectra_type == 1:
+            yData.append(fruit_spectra.randEvap())
+        elif spectra_type == 2:
+            yData.append(fruit_spectra.randGauss())
+        else:
+            yData.append(fruit_spectra.randHighEnergy())
 
-def epithermal(E, E_d, b, beta_p):
-    return (1 - np.exp( -np.power((E/E_d), 2) )) * np.power(E, (b-1)) * np.exp(-E/beta_p)
+    yData = np.array(yData)
+    xData = []
+    for y in yData:
+        xData.append(np.matmul(constants.cm, y))
 
-def fast_fission(E, alpha, beta):
-    return (np.power(E, alpha)) * np.exp(-E / beta)
+    return np.array(xData), yData
 
-def fast_evaporation(E, T_ev):
-    return (E / (np.power(T_ev, 2))) * np.exp(-E / T_ev) 
+FRUIT = lambda num_data, yPerturbFrom : FRUIT_spectra_algorithm(num_data)
 
-def fast_gaussian(E, E_m, sigma):
-    return np.exp( - np.power((E - E_m), 2) / (2 * np.power((sigma * E_m), 2) ) )
-
-def fast_high_energy(E, T_ev):
-    return (E / (np.power(T_ev, 2))) * np.exp(-E / T_ev)
-
-def high_energy_func(E, T_hi):
-    return (E / (np.power(T_hi, 2))) * np.exp(-E / T_hi)
-
-def fission(E, scale, P_th, P_e, T_0, E_d, b, beta_p, alpha, beta):
-    E = E * scale
-    while P_th + P_e > 1:
-        P_th = P_th / 2.0
-        P_e = P_e / 2.0
-    P_f = 1 - P_th - P_e
-    
-    spectra = P_th * thermal(E, T_0) + P_e * epithermal(E, E_d, b, beta_p) + P_f * fast_fission(E, alpha, beta)
-    return spectra / np.sum(spectra)
-
-def evaporation(E, scale, P_th, P_e, T_0, E_d, b, beta_p, T_ev):
-    E = E * scale
-    while P_th + P_e > 1:
-        P_th = P_th / 2.0
-        P_e = P_e / 2.0
-    P_f = 1 - P_th - P_e
-    
-    spectra = P_th * thermal(E, T_0) + P_e * epithermal(E, E_d, b, beta_p) + P_f * fast_evaporation(E, T_ev)
-    return spectra / np.sum(spectra)
-
-def gaussian(E, scale, P_th, P_e, T_0, E_d, b, beta_p, E_m, sigma):
-    E = E * scale
-    while P_th + P_e > 1:
-        P_th = P_th / 2.0
-        P_e = P_e / 2.0
-    P_f = 1 - P_th - P_e
-    
-    spectra = P_th * thermal(E, T_0) + P_e * epithermal(E, E_d, b, beta_p) + P_f * fast_gaussian(E, E_m, sigma)
-    return spectra / np.sum(spectra)
-
-def high_energy(E, scale, P_th, P_e, P_f, T_0, E_d, b, beta_p, T_ev, T_hi):
-    E = E * scale
-    while P_th + P_e + P_f > 1:
-        P_th = P_th / 2.0
-        P_e = P_e / 2.0
-        P_f = P_f / 2.0
-    P_he = 1 - P_th - P_e - P_f
-    
-    spectra = P_th * thermal(E, T_0) + P_e * epithermal(E, E_d, b, beta_p) + P_f * fast_high_energy(E, T_ev) + P_he * high_energy_func(E, T_hi)
-    return spectra / np.sum(spectra)
 
 # GAN Algorithm
 def setup_GAN():

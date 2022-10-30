@@ -13,7 +13,7 @@ import tensorflow.keras as keras
 import constants
 import data_generation
 
-def generate_model(layer1, layer2, layer3, alpha, drop, batch_size, lr):
+def generate_model(layer1, layer2, layer3, alpha, drop, batch_size):
     
     model = Sequential()
     
