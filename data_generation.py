@@ -13,8 +13,8 @@ import random
 import GAN_network
 
 import sys
-sys.path.append('/g/g15/mcgreivy/NeutronSpectraGeneration/FRUIT')
-sys.path.append('/g/g15/mcgreivy/NeutronSpectraGeneration')
+sys.path.append('/Users/jamesmcgreivy/desktop/NeutronSpectraGeneration/FRUIT')
+sys.path.append('/Users/jamesmcgreivy/desktop/NeutronSpectraGeneration/')
 
 import fruit_spectra
 
@@ -171,7 +171,7 @@ RAND = lambda num_data, yPerturbFrom : random_spectra_algorithm(num_data)
 # Gaussian Peaks
 
 def gaussian_peak_algorithm(meanPeakCenter, stdPeakCenter, meanPeakWidth, 
-                          stdPeakWidth, extraPeakProb, noise, ampDecay,
+                          stdPeakWidth, extraPeakProb, ampDecay,
                           numData = NUM_DATA):
 
     def gaussian(x, A, mean, std):
@@ -197,9 +197,7 @@ def gaussian_peak_algorithm(meanPeakCenter, stdPeakCenter, meanPeakWidth,
             addGaussian(constants.Ebins, y, peakAmp, peakCenter, peakWidth)
             
             addPeak = np.random.random()
-            peakAmp = peakAmp * (2.0 * np.random.random()) * ampDecay 
-        
-        y = y * (1 + noise * np.random.random(len(y)) )
+            peakAmp = peakAmp * (2.0 * np.random.random()) * ampDecay
         
         if np.sum(y) == 0:
             continue

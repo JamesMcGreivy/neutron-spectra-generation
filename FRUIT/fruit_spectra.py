@@ -1,9 +1,9 @@
 # Move into the proper directory on LASSEN
 import os
-os.chdir("/g/g15/mcgreivy/NeutronSpectraGeneration/")
+os.chdir("..")
 import sys
-sys.path.append('/g/g15/mcgreivy/NeutronSpectraGeneration/FRUIT')
-sys.path.append('/g/g15/mcgreivy/NeutronSpectraGeneration')
+sys.path.append('./FRUIT')
+#sys.path.append('/g/g15/mcgreivy/NeutronSpectraGeneration')
 
 import pandas as pd
 import numpy as np
@@ -161,9 +161,11 @@ def randGauss():
 		        P_th_gauss.append(fit["params"][0]) 
 		        P_e_gauss.append(fit["params"][1]) 
 		        b_gauss.append(fit["params"][2]) 
-		        beta_p_gauss.append(fit["params"][3]) 
-		        E_m_gauss.append(fit["params"][4])
-		        sigma_gauss.append(fit["params"][5])
+		        beta_p_gauss.append(fit["params"][3])
+                # Only append E_m if its below 20 MeV, otherwise its just unreasonable
+		        if fit["params"][4] < 20:
+		            E_m_gauss.append(fit["params"][4])
+		            sigma_gauss.append(fit["params"][5])
 	P_th_rand = random.choice(P_th_gauss)
 	P_e_rand = P_e_gauss[P_th_gauss.index(P_th_rand)]
 	b_rand = random.choice(b_gauss)
