@@ -12,12 +12,14 @@ import numpy as np
 import tensorflow as tf
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
+# Must properly set to home directory of "NeutronSpectraGeneration" 
 import sys
 sys.path.append("/g/g15/mcgreivy/NeutronSpectraGeneration/")
 
 import unfolding_network
 import data_generation
 import constants
+
 
 # PSA == Perturbed Spectra Algorithm
 

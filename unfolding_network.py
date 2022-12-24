@@ -13,7 +13,15 @@ import tensorflow.keras as keras
 import constants
 import data_generation
 
-def generate_model(layer1, layer2, layer3, alpha, drop, batch_size):
+# This is the general unfolding model used throughout the paper.
+# - 1 input layer (implied)
+# - 1 hidden layer
+# - 1 dropout layer
+# - 1 hidden layer
+# - 1 dropout layer
+# - 1 output layer (linear activation for regression)
+
+def generate_model(layer1, layer2, alpha, drop, batch_size):
     
     model = Sequential()
     
@@ -21,8 +29,6 @@ def generate_model(layer1, layer2, layer3, alpha, drop, batch_size):
     model.add(Dropout(drop))
     model.add(Dense(int(layer2), activation = LeakyReLU(alpha = alpha)))
     model.add(Dropout(drop))
-    model.add(Dense(int(layer3), activation = LeakyReLU(alpha = alpha)))
-    model.add(Dropout(drop))
-    model.add(Dense(int(data_generation.yDim), activation = "softmax"))
+    model.add(Dense(int(data_generation.yDim), activation = "linear"))
     
     return model

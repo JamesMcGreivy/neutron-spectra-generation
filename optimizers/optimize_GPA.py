@@ -12,6 +12,7 @@ import numpy as np
 import tensorflow as tf
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
+# Must properly set to home directory of "NeutronSpectraGeneration" 
 import sys
 sys.path.append("/g/g15/mcgreivy/NeutronSpectraGeneration/")
 
@@ -20,15 +21,17 @@ import data_generation
 import constants
 
 def evaluate_GPA_params(meanPeakCenter, stdPeakCenter, meanPeakWidth, 
-                      stdPeakWidth, extraPeakProb, noise, ampDecay):
+                      stdPeakWidth, extraPeakProb, ampDecay, ampSpread):
     
-    SPLITS = 6
+    lr = 0.001
+    
+    SPLITS = 3
     benchmark = []
 
     xeval, yeval = data_generation.x_data_IAEA, data_generation.y_data_IAEA
 
     xdata, ydata = data_generation.gaussian_peak_algorithm(meanPeakCenter, stdPeakCenter, meanPeakWidth, 
-                                                                stdPeakWidth, extraPeakProb, noise, ampDecay)
+                      stdPeakWidth, extraPeakProb, ampDecay, ampSpread)
     
     boot = ShuffleSplit(n_splits = SPLITS, test_size = 0.2)
     for train, test in boot.split(xdata):
@@ -40,7 +43,7 @@ def evaluate_GPA_params(meanPeakCenter, stdPeakCenter, meanPeakWidth,
         
         model = unfolding_network.generate_model(**constants.OPT_PARAMS_UNFOLD)
         
-        model.compile(loss = "mse", optimizer = Adam(learning_rate=constants.OPT_PARAMS_UNFOLD["lr"]))
+        model.compile(loss = "mse", optimizer = Adam(learning_rate=lr))
         
         monitor = EarlyStopping(monitor='val_loss', min_delta=1e-5,
                                 patience=40, verbose=0, mode='min',
@@ -57,15 +60,15 @@ def evaluate_GPA_params(meanPeakCenter, stdPeakCenter, meanPeakWidth,
         
     print("{} ± {}".format(np.mean(benchmark), 2 * np.std(benchmark)))
         
-    return -np.mean(benchmark)
+    return -1e6 * np.mean(benchmark)
 
-pbounds = {"ampDecay" : (0.1, 0.9),
-           "extraPeakProb" : (0.1, 0.9),
-           "meanPeakCenter" : (-7, -15),
-           "meanPeakWidth" : (0, 10),
-           "noise" : (0, 0),
-           "stdPeakCenter" : (0, 10),
-           "stdPeakWidth" : (0, 5)}
+pbounds = {"ampDecay" : (0.6, 1),
+           "ampSpread" : (0, 1),
+           "extraPeakProb" : (0.5, 0.9),
+           "meanPeakCenter" : (0.25, 0.75),
+           "meanPeakWidth" : (0.001, 0.2),
+           "stdPeakCenter" : (0.3, 0.6),
+           "stdPeakWidth" : (0.001, 0.2)}
 
 def optimize_model(file_name, init_points = 50, n_iter = 50):    
 
@@ -79,20 +82,4 @@ def optimize_model(file_name, init_points = 50, n_iter = 50):
     optimizer.maximize(init_points = init_points, n_iter = n_iter)
 
     return optimizer.max
-
-"""
- target   | ampDecay  | extraP... | meanPe... | meanPe... |   noise   | stdPea... | stdPea... |
--0.00049  |  0.1      |  0.9      | -0.3927   |  2.911    |  0.0      |  5.428    |  4.0      |
-
-{'target': -0.00048305683938511143, 'params': {
-'ampDecay': 0.15403714272221045, 
-'extraPeakProb': 0.7964612516930676, 
-'meanPeakCenter': -1.1916863728628457, 
-'meanPeakWidth': 2.219829939422177, 
-'noise': 0.25677306014586154, 
-'stdPeakCenter': 6.36610572587569, 
-'stdPeakWidth': 5.839641275287087}
-}
-"""
-
 
